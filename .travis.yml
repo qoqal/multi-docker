@@ -1,0 +1,22 @@
+sudo: required
+services:
+    - docker
+
+before_install:
+    - docker build - qosha/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+    - docker run qosha/react-test npm test -- --coverage
+
+after_success:
+    - docker build -t qosha/multi-client ./client
+    - docker build -t qosha/multi-nginx ./nginx
+    - docker build -t qosha/multi-server ./server
+    - docker build -t qosha/multi-worker ./worker
+    # Log in to the Docker CLI
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    # Push to Docker Hub
+    - docker push -t qosha/multi-client
+    - docker push -t qosha/multi-nginx
+    - docker push -t qosha/multi-server
+    - docker push -t qosha/multi-worker
