@@ -20,3 +20,16 @@ after_success:
     - docker push qosha/multi-nginx
     - docker push qosha/multi-server
     - docker push qosha/multi-worker
+
+deploy:
+    provider: elasticbeanstalk
+    region: us-west-2
+    app: multi-docker
+    env: MultiDocker-env
+    bucket_name: elasticbeanstalk-us-west-2-008999747399
+    bucet_path: docker-multi
+    on:
+        branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key:
+        secure: $AWS_SECRET_KEY
